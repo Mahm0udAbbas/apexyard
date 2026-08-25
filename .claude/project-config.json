@@ -1,12 +1,12 @@
 {
   "_comment": "Framework-repo overrides for project-config.defaults.json. The apexyard framework repo itself dog-foods its own pre-push gate here — see .claude/hooks/pre-push-gate.sh and docs/getting-started.md § 'Terminal push hook'. Managed projects under governance set their own pre_push.commands per their stack.",
-
   "pre_push": {
     "_comment": "Commands mirror the locally-runnable CI jobs from .github/workflows/. Each entry guards for a missing tool: a missing tool prints an actionable install message and exits 0 (skip-with-note) so a contributor without the tool is not hard-blocked. Link-check (lychee) is intentionally excluded — it is slow and network-flaky, unsuitable for pre-push. See docs/getting-started.md for the git pre-push hook (core.hooksPath) wiring.",
     "commands": [
       {
         "name": "markdownlint",
-        "run": "command -v npx >/dev/null 2>&1 || { echo 'INFO: npx not found — markdownlint check skipped. Install Node.js (https://nodejs.org) to enable it locally.'; exit 0; }; md_files=$(git ls-files '*.md' 2>/dev/null); [ -z \"$md_files\" ] && { echo 'INFO: no tracked markdown files found — markdownlint check skipped.'; exit 0; }; echo \"$md_files\" | tr '\\n' '\\0' | xargs -0 npx --yes markdownlint-cli2 2>&1"
+        "_comment": "Glob form, not an xargs file list: Windows caps a command line at ~8KB and this repo's 400+ tracked .md paths overflow it, so the xargs form failed with \"The command line is too long\" before linting anything. Negations keep the scope to repo content.",
+        "run": "command -v npx >/dev/null 2>&1 || { echo \"INFO: npx not found — markdownlint check skipped. Install Node.js (https://nodejs.org) to enable it locally.\"; exit 0; }; npx --yes markdownlint-cli2 \"**/*.md\" \"!**/node_modules/**\" \"!.agents/**\" \"!.codex/**\" 2>&1"
       },
       {
         "name": "shellcheck",
@@ -17,5 +17,16 @@
         "run": "bash .claude/hooks/tests/test_subpack_extraction.sh 2>&1"
       }
     ]
+  },
+  "portfolio": {
+    "_comment": "Split-portfolio v2 — private half at Mahm0udAbbas/apexyard-portfolio, cloned as a sibling. Keeps private client repo slugs off this PUBLIC fork.",
+    "registry": "../apexyard-portfolio/apexyard.projects.yaml",
+    "projects_dir": "../apexyard-portfolio/projects",
+    "ideas_backlog": "../apexyard-portfolio/projects/ideas-backlog.md",
+    "onboarding": "../apexyard-portfolio/onboarding.yaml",
+    "workspace_dir": "../apexyard-portfolio/workspace",
+    "custom_skills_dir": "../apexyard-portfolio/custom-skills",
+    "custom_handbooks_dir": "../apexyard-portfolio/custom-handbooks",
+    "agent_routing": "../apexyard-portfolio/agent-routing.yaml"
   }
 }

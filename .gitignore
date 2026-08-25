@@ -77,3 +77,14 @@ workspace/*/
 # `git status` shows them as untracked symlinks — leave them alone.
 # If you absolutely want to suppress the untracked-symlink line, add the
 # specific name to .git/info/exclude on each clone.
+
+# -----------------------------------------------------------------------------
+# Split-portfolio v2 — the private half lives in ../apexyard-portfolio
+# -----------------------------------------------------------------------------
+# Registry, per-project docs, and managed-project clones are resolved from the
+# private sibling repo via .claude/project-config.json → portfolio. Ignored here
+# so a stray `git add -A` can never publish a private client's repo slug on this
+# PUBLIC fork. See docs/multi-project.md § "Split-portfolio mode".
+apexyard.projects.yaml
+projects/
+workspace/
